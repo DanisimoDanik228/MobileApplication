@@ -3,6 +3,7 @@ package com.example.mobileapplication
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen // Нужный импорт
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,7 +12,13 @@ import androidx.navigation.navArgument
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 1. Инициализируем SplashScreen ПЕРЕД super.onCreate
+        val splashScreen = installSplashScreen()
+
         super.onCreate(savedInstanceState)
+
+        // 2. setContentView НЕ НУЖЕН в Compose. Удаляем ту строку с ошибкой.
+
         setContent {
             // Создаем контроллер навигации
             val navController = rememberNavController()
