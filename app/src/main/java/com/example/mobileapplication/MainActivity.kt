@@ -9,36 +9,38 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import android.content.Context
+import android.content.Intent
+
 
 class MainActivity : ComponentActivity() {
+
+    // Это важно для применения языка при старте
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 1. Инициализируем SplashScreen ПЕРЕД super.onCreate
         val splashScreen = installSplashScreen()
 
         super.onCreate(savedInstanceState)
 
-        // 2. setContentView НЕ НУЖЕН в Compose. Удаляем ту строку с ошибкой.
-
         setContent {
-            // Создаем контроллер навигации
             val navController = rememberNavController()
 
-            // Настраиваем маршруты
             NavHost(
                 navController = navController,
                 startDestination = Screen.Main.route
             ) {
-                // Главная
-                composable(Screen.Main.route) {
-                    MainScreen(navController)
-                }
+                composable(Screen.Main.route) { MainScreen(navController) }
 
-                // Настройки
+                // Передаем функцию смены языка в экран настроек
                 composable(Screen.Settings.route) {
-                    SettingsScreen(navController)
+                    SettingsScreen(navController) { lang ->
+                        changeLanguage(lang)
+                    }
                 }
 
-                // Детали (с аргументом)
                 composable(
                     route = Screen.Details.route,
                     arguments = listOf(navArgument("itemId") { type = NavType.StringType })
@@ -48,5 +50,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    // Функция для смены языка и перезагрузки Activity
+    private fun changeLanguage(lang: String) {
+        LocaleHelper.setLocale(this, lang)
+        // Перезапускаем Activity, чтобы изменения вступили в силу
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
     }
 }

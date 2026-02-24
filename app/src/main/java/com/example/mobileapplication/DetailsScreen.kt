@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
@@ -12,7 +13,7 @@ import androidx.navigation.NavController
 fun DetailsScreen(itemId: String?, navController: NavController) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Детали") })
+            TopAppBar(title = { Text(stringResource(id = R.string.details_title)) })
         }
     ) { paddingValues ->
         Column(
@@ -21,12 +22,12 @@ fun DetailsScreen(itemId: String?, navController: NavController) {
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Text("Вы смотрите объект с ID: $itemId", style = MaterialTheme.typography.headlineSmall)
+            Text(stringResource(id = R.string.details_viewing_object, itemId ?: "null"), style = MaterialTheme.typography.headlineSmall)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = { navController.popBackStack() }) {
-                Text("Назад")
+                Text(stringResource(id = R.string.back))
             }
         }
     }

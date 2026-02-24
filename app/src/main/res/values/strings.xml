@@ -1,3 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Main application strings -->
     <string name="app_name">MobileApplication</string>
+
+    <!-- Main Screen -->
+    <string name="main_title">Main Screen</string>
+    <string name="details">Details</string>
+    <string name="go_to_settings">Go to settings</string>
+
+    <!-- Details Screen -->
+    <string name="details_title">Details</string>
+    <string name="details_viewing_object">You are viewing object with ID: %s</string>
+    <string name="back">Back</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_language_label">Select language:</string>
+    <string name="russian">Russian</string>
+    <string name="english">English</string>
 </resources>

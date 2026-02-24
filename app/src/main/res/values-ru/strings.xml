@@ -1,0 +1,20 @@
+<resources>
+    <!-- Основные строки приложения -->
+    <string name="app_name">MobileApplication</string>
+
+    <!-- Главный экран (MainScreen) -->
+    <string name="main_title">Главный экран</string>
+    <string name="details">Детали</string>
+    <string name="go_to_settings">Перейти в настройки</string>
+
+    <!-- Экран деталей (DetailsScreen) -->
+    <string name="details_title">Детали</string>
+    <string name="details_viewing_object">Вы смотрите объект с ID: %s</string>
+    <string name="back">Назад</string>
+
+    <!-- Экран настроек (SettingsScreen) -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_language_label">Выберите язык:</string>
+    <string name="russian">Русский</string>
+    <string name="english">Английский</string>
+</resources>
