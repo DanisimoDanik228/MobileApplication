@@ -18,4 +18,9 @@
     <string name="settings_language_label">Select language:</string>
     <string name="russian">Russian</string>
     <string name="english">English</string>
+
+    <string name="theme_label">Interface Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System default</string>
 </resources>

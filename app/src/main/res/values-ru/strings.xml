@@ -17,4 +17,9 @@
     <string name="settings_language_label">Выберите язык:</string>
     <string name="russian">Русский</string>
     <string name="english">Английский</string>
+
+    <string name="theme_label">Тема интерфейса</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Темная</string>
+    <string name="theme_system">Как в системе</string>
 </resources>
