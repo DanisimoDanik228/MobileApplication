@@ -9,14 +9,24 @@
 
     <!-- Экран деталей (DetailsScreen) -->
     <string name="details_title">Детали</string>
-    <string name="details_viewing_object">Вы смотрите объект с ID: %s</string>
+    <string name="details_viewing_object">Редактирование ID: %1$s</string>
     <string name="back">Назад</string>
+    <string name="save_changes">Сохранить изменения</string>
+    <string name="delete_record">Удалить</string>
+    <string name="clear_fields">Очистить поля</string>
+    <string name="error_not_found">Книга не найдена</string>
+    <string name="clear_all_records">Очистить весь список</string>
 
     <!-- Экран настроек (SettingsScreen) -->
     <string name="settings_title">Настройки</string>
     <string name="settings_language_label">Выберите язык:</string>
     <string name="russian">Русский</string>
     <string name="english">Английский</string>
+
+    <string name="add_user_title">Добавить новую книгу</string>
+    <string name="label_book_name">Название книги</string>
+    <string name="label_author_name">Имя автора</string>
+    <string name="button_save">Сохранить</string>
 
     <string name="theme_label">Тема интерфейса</string>
     <string name="theme_light">Светлая</string>

@@ -5,30 +5,49 @@ import androidx.compose.runtime.mutableStateListOf
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import com.google.gson.Gson
+import java.util.UUID
 
-class LocalUserRepositoryImpl(context: Context) : UserRepository {
+class LocalBookRepositoryImpl(context: Context) : BookRepository {
     private val gson = Gson()
     // Путь к файлу во внутреннем хранилище приложения
     private val file = File(context.filesDir, "users_data.json")
 
     // Список теперь загружается из файла при создании репозитория
-    val userDatabase = mutableStateListOf<User>().apply {
+    val userDatabase = mutableStateListOf<Book>().apply {
         addAll(loadFromFile())
     }
 
-    override fun getAllUsers(): List<User> = userDatabase
-    override fun addUser(user: User) {
-        userDatabase.add(user)
+    override fun getAllBooks(): List<Book> = userDatabase
+
+    override fun addBook(book: Book) {
+        book.id = UUID.randomUUID().toString()
+        userDatabase.add(book)
         saveToFile() // Сразу сохраняем изменения в файл
     }
 
-    override fun getUserById(id: Int): User? {
+    override fun updateBook(book: Book) {
+        val index = userDatabase.indexOfFirst { it.id == book.id }
+
+        if (index != -1) {
+            userDatabase[index] = book
+            saveToFile()
+        }
+    }
+
+    override fun deleteBook(id: String ) {
+        val removed = userDatabase.removeIf { it.id == id }
+        if (removed) {
+            saveToFile()
+        }
+    }
+
+    override fun getBookById(id: String ): Book? {
         return userDatabase.find { it.id == id }
     }
 
-    override fun saveUser(user: User) {
-        userDatabase.add(user)
-        saveToFile() // Сохраняем изменения в файл сразу
+    override fun clearAll() {
+        userDatabase.clear()
+        saveToFile()
     }
 
     // Сохранение списка в JSON
@@ -38,11 +57,11 @@ class LocalUserRepositoryImpl(context: Context) : UserRepository {
     }
 
     // Загрузка списка из JSON
-    private fun loadFromFile(): List<User> {
+    private fun loadFromFile(): List<Book> {
         if (!file.exists()) return emptyList()
         return try {
             val jsonString = file.readText()
-            val itemType = object : TypeToken<List<User>>() {}.type
+            val itemType = object : TypeToken<List<Book>>() {}.type
             gson.fromJson(jsonString, itemType) ?: emptyList()
         } catch (e: Exception) {
             emptyList()

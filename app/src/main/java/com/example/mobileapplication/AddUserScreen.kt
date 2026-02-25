@@ -6,65 +6,87 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mobileapplication.Repository.LocalUserRepositoryImpl
-import com.example.mobileapplication.Repository.User
+import com.example.mobileapplication.Repository.LocalBookRepositoryImpl
+import com.example.mobileapplication.Repository.Book
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.res.stringResource
+
+// Добавьте эти импорты для иконок
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddUserScreen(navController: NavController, repository: LocalUserRepositoryImpl) {
-    var userId by remember { mutableStateOf("") }
-    var userName by remember { mutableStateOf("") }
-
-    // Состояние прокрутки
+fun AddUserScreen(navController: NavController, repository: LocalBookRepositoryImpl) {
+    var bookName by remember { mutableStateOf("") }
+    var authorName by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Добавить пользователя") })
+            TopAppBar(
+                title = { Text(stringResource(id = R.string.add_user_title)) },
+                // КНОПКА НАЗАД В ВЕРХНЕЙ ПАНЕЛИ
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(id = R.string.back)
+                        )
+                    }
+                }
+            )
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                // 1. Добавляем автоматический отступ от клавиатуры
                 .imePadding()
-                // 2. Делаем экран прокручиваемым, если контент не влезает
                 .verticalScroll(scrollState)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
-                value = userId,
-                onValueChange = { userId = it },
-                label = { Text("Введите ID") },
+                value = bookName,
+                onValueChange = { bookName = it },
+                label = { Text(stringResource(id = R.string.label_book_name)) },
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
-                value = userName,
-                onValueChange = { userName = it },
-                label = { Text("Введите имя") },
+                value = authorName,
+                onValueChange = { authorName = it },
+                label = { Text(stringResource(id = R.string.label_author_name)) },
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // 3. Используем Spacer с весом, чтобы кнопка была внизу,
-            // но при появлении клавиатуры она "подпрыгивала" вверх
             Spacer(modifier = Modifier.height(24.dp))
 
+            // КНОПКА СОХРАНИТЬ
             Button(
                 onClick = {
-                    val idInt = userId.toIntOrNull()
-                    if (idInt != null && userName.isNotBlank()) {
-                        repository.addUser(User(idInt, userName))
+                    if (bookName.isNotBlank() && authorName.isNotBlank()) {
+                        repository.addBook(Book("", bookName, authorName))
                         navController.popBackStack()
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Сохранить")
+                Text(stringResource(id = R.string.button_save))
+            }
+
+            // КНОПКА ОТМЕНЫ (ТЕКСТОВАЯ)
+            TextButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(id = R.string.back))
             }
         }
     }

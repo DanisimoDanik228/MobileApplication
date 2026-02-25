@@ -15,9 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.mobileapplication.Repository.LocalUserRepositoryImpl
-import com.example.mobileapplication.Repository.User
-import com.example.mobileapplication.Repository.UserRepository
+import com.example.mobileapplication.Repository.LocalBookRepositoryImpl
 // Импортируйте вашу тему (название может отличаться, проверьте в ui.theme/Theme.kt)
 import com.example.mobileapplication.ui.theme.MobileApplicationTheme
 
@@ -52,8 +50,7 @@ class MainActivity : ComponentActivity() {
             // 3. Оборачиваем приложение в вашу тему
             MobileApplicationTheme(darkTheme = darkTheme) {
                 val navController = rememberNavController()
-                val repository = LocalUserRepositoryImpl(applicationContext);
-
+                val repository = LocalBookRepositoryImpl(applicationContext);
                 NavHost(
                     navController = navController,
                     startDestination = Screen.Main.route
@@ -80,9 +77,10 @@ class MainActivity : ComponentActivity() {
                     composable(
                         route = Screen.Details.route,
                         arguments = listOf(navArgument("itemId") { type = NavType.StringType })
-                    ) { backStackEntry ->
+                    ) {
+                        backStackEntry ->
                         val id = backStackEntry.arguments?.getString("itemId")
-                        DetailsScreen(id, navController)
+                        DetailsScreen(id, navController,repository)
                     }
 
                     composable(Screen.AddUser.route) {

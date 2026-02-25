@@ -10,14 +10,24 @@
 
     <!-- Details Screen -->
     <string name="details_title">Details</string>
-    <string name="details_viewing_object">You are viewing object with ID: %s</string>
+    <string name="details_viewing_object">Editing ID: %1$s</string>
     <string name="back">Back</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="delete_record">Delete</string>
+    <string name="clear_fields">Clear Fields</string>
+    <string name="error_not_found">Book not found</string>
+    <string name="clear_all_records">Delete all books</string>
 
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_language_label">Select language:</string>
     <string name="russian">Russian</string>
     <string name="english">English</string>
+
+    <string name="add_user_title">Add New Book</string>
+    <string name="label_book_name">Book Title</string>
+    <string name="label_author_name">Author Name</string>
+    <string name="button_save">Save</string>
 
     <string name="theme_label">Interface Theme</string>
     <string name="theme_light">Light</string>
