@@ -7,6 +7,8 @@ sealed class Screen(val route: String) {
     // Экран настроек - маршрут "settings"
     object Settings : Screen("settings")
 
+    object AddUser : Screen("add_user")
+
     // Экран деталей - маршрут "details/{itemId}"
     // Фигурные скобки {itemId} означают, что это переменная часть пути
     object Details : Screen("details/{itemId}") {
