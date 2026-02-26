@@ -24,10 +24,8 @@ fun DetailsScreen(
     navController: NavController,
     repository: LocalBookRepositoryImpl
 ) {
-    // Поиск книги
     val book = remember(itemId) { repository.getBookById(itemId ?: "") }
 
-    // Если книга не найдена, выводим сообщение об ошибке (тоже через ресурсы)
     if (book == null) {
         Scaffold(
             topBar = { TopAppBar(title = { Text(stringResource(id = R.string.details_title)) }) }
@@ -42,7 +40,6 @@ fun DetailsScreen(
         return
     }
 
-    // Состояния полей
     var bookName by remember { mutableStateOf(book.bookName) }
     var authorName by remember { mutableStateOf(book.authorName) }
 
@@ -68,7 +65,6 @@ fun DetailsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Используем строку с параметром для ID
             Text(
                 text = stringResource(id = R.string.details_viewing_object, book.id),
                 style = MaterialTheme.typography.labelLarge

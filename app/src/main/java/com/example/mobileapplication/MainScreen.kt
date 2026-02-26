@@ -14,7 +14,6 @@ import com.example.mobileapplication.Repository.Book
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, repository: LocalBookRepositoryImpl) {
-    // Используем getAllBooks() напрямую (Compose будет отслеживать изменения в списке)
     val users = repository.getAllBooks()
 
     Scaffold(
@@ -33,7 +32,6 @@ fun MainScreen(navController: NavController, repository: LocalBookRepositoryImpl
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Кнопки настроек и примера (можно оставить или убрать)
             Button(
                 onClick = { navController.navigate(Screen.Settings.route) },
                 modifier = Modifier.fillMaxWidth()
@@ -45,7 +43,7 @@ fun MainScreen(navController: NavController, repository: LocalBookRepositoryImpl
                 onClick = { repository.clearAll() },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error // Красный цвет для опасного действия
+                    containerColor = MaterialTheme.colorScheme.error
                 )
             ) {
                 Text(stringResource(id = R.string.clear_all_records))
@@ -57,13 +55,11 @@ fun MainScreen(navController: NavController, repository: LocalBookRepositoryImpl
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Используем расширение items для работы со списком напрямую
                 items(users.size) { index ->
                     val book = users[index]
                     UserItem(
                         user = book,
                         onClick = {
-                            // Передаем ID нажатой книги в роут
                             navController.navigate(Screen.Details.createRoute(book.id.toString()))
                         }
                     )
@@ -77,7 +73,7 @@ fun MainScreen(navController: NavController, repository: LocalBookRepositoryImpl
 @Composable
 fun UserItem(user: Book, onClick: () -> Unit) {
     Card(
-        onClick = onClick, // Теперь вся карточка кликабельна
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {

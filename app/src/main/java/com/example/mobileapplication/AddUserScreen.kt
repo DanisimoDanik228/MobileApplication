@@ -29,7 +29,6 @@ fun AddUserScreen(navController: NavController, repository: LocalBookRepositoryI
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.add_user_title)) },
-                // КНОПКА НАЗАД В ВЕРХНЕЙ ПАНЕЛИ
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -68,7 +67,6 @@ fun AddUserScreen(navController: NavController, repository: LocalBookRepositoryI
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // КНОПКА СОХРАНИТЬ
             Button(
                 onClick = {
                     if (bookName.isNotBlank() && authorName.isNotBlank()) {
@@ -81,7 +79,6 @@ fun AddUserScreen(navController: NavController, repository: LocalBookRepositoryI
                 Text(stringResource(id = R.string.button_save))
             }
 
-            // КНОПКА ОТМЕНЫ (ТЕКСТОВАЯ)
             TextButton(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.fillMaxWidth()

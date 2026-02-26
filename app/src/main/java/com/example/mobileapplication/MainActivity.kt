@@ -21,7 +21,6 @@ import com.example.mobileapplication.ui.theme.MobileApplicationTheme
 
 class MainActivity : ComponentActivity() {
 
-    // Вспомогательный объект для работы с настройками темы
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun attachBaseContext(newBase: Context) {
@@ -35,19 +34,16 @@ class MainActivity : ComponentActivity() {
         sharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE)
 
         setContent {
-            // 1. Получаем сохраненную тему (0 - система, 1 - светлая, 2 - темная)
             val savedTheme = remember {
                 mutableIntStateOf(sharedPreferences.getInt("theme_mode", 0))
             }
 
-            // 2. Логика определения: включать ли темный режим в Compose
             val darkTheme = when (savedTheme.intValue) {
-                1 -> false // Принудительно светлая
-                2 -> true  // Принудительно темная
-                else -> isSystemInDarkTheme() // Автоматически по системе
+                1 -> false
+                2 -> true
+                else -> isSystemInDarkTheme()
             }
 
-            // 3. Оборачиваем приложение в вашу тему
             MobileApplicationTheme(darkTheme = darkTheme) {
                 val navController = rememberNavController()
                 val repository = LocalBookRepositoryImpl(applicationContext);
@@ -60,16 +56,13 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(Screen.Settings.route) {
-                        // 4. Передаем новые параметры в экран настроек
                         SettingsScreen(
                             navController = navController,
                             onLanguageChange = { lang -> changeLanguage(lang) },
                             currentTheme = savedTheme.intValue,
                             onThemeChange = { newTheme ->
-                                // Сохраняем выбор в SharedPreferences
                                 sharedPreferences.edit().putInt("theme_mode", newTheme).apply()
-                                // Обновляем состояние, чтобы экран сразу перекрасился
-                                savedTheme.intValue = newTheme
+                                 savedTheme.intValue = newTheme
                             }
                         )
                     }

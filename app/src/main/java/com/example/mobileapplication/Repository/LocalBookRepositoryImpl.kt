@@ -9,10 +9,8 @@ import java.util.UUID
 
 class LocalBookRepositoryImpl(context: Context) : BookRepository {
     private val gson = Gson()
-    // Путь к файлу во внутреннем хранилище приложения
     private val file = File(context.filesDir, "users_data.json")
 
-    // Список теперь загружается из файла при создании репозитория
     val userDatabase = mutableStateListOf<Book>().apply {
         addAll(loadFromFile())
     }
@@ -22,7 +20,7 @@ class LocalBookRepositoryImpl(context: Context) : BookRepository {
     override fun addBook(book: Book) {
         book.id = UUID.randomUUID().toString()
         userDatabase.add(book)
-        saveToFile() // Сразу сохраняем изменения в файл
+        saveToFile()
     }
 
     override fun updateBook(book: Book) {
@@ -50,13 +48,11 @@ class LocalBookRepositoryImpl(context: Context) : BookRepository {
         saveToFile()
     }
 
-    // Сохранение списка в JSON
     private fun saveToFile() {
         val jsonString = gson.toJson(userDatabase)
         file.writeText(jsonString)
     }
 
-    // Загрузка списка из JSON
     private fun loadFromFile(): List<Book> {
         if (!file.exists()) return emptyList()
         return try {

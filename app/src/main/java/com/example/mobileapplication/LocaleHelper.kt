@@ -9,7 +9,6 @@ import java.util.Locale
 object LocaleHelper {
     private const val SELECTED_LANGUAGE = "Locale.Helper.Selected.Language"
 
-    // Сохраняем выбранный язык в SharedPreferences
     fun setLocale(context: Context, language: String) {
         persist(context, language)
         updateResources(context, language)

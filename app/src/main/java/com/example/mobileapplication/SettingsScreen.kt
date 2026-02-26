@@ -14,8 +14,8 @@ import androidx.navigation.NavController
 fun SettingsScreen(
     navController: NavController,
     onLanguageChange: (String) -> Unit,
-    currentTheme: Int,           // Добавлено
-    onThemeChange: (Int) -> Unit // Добавлено
+    currentTheme: Int,
+    onThemeChange: (Int) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -28,7 +28,6 @@ fun SettingsScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // --- ВЫБОР ЯЗЫКА ---
             Text(
                 text = stringResource(id = R.string.settings_language_label),
                 style = MaterialTheme.typography.titleMedium
@@ -45,7 +44,6 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // --- ВЫБОР ТЕМЫ (с локализацией) ---
             Text(
                 text = stringResource(id = R.string.theme_label),
                 style = MaterialTheme.typography.titleMedium
@@ -53,17 +51,14 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Column {
-                // Светлая
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = currentTheme == 1, onClick = { onThemeChange(1) })
                     Text(stringResource(id = R.string.theme_light), modifier = Modifier.padding(start = 8.dp))
                 }
-                // Темная
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = currentTheme == 2, onClick = { onThemeChange(2) })
                     Text(stringResource(id = R.string.theme_dark), modifier = Modifier.padding(start = 8.dp))
                 }
-                // Системная
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = currentTheme == 0, onClick = { onThemeChange(0) })
                     Text(stringResource(id = R.string.theme_system), modifier = Modifier.padding(start = 8.dp))
