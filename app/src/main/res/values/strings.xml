@@ -27,10 +27,16 @@
     <string name="add_user_title">Add New Book</string>
     <string name="label_book_name">Book Title</string>
     <string name="label_author_name">Author Name</string>
+    <string name="label_description">Description</string>
     <string name="button_save">Save</string>
 
     <string name="theme_label">Interface Theme</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_system">System default</string>
+
+    <string name="user_id">ID: %1$s</string>
+    <string name="book_title">Title: %1$s</string>
+    <string name="book_author">Author: %1$s</string>
+    <string name="book_description">Description: %1$s</string>
 </resources>

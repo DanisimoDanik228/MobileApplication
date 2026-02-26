@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 fun AddUserScreen(navController: NavController, repository: LocalBookRepositoryImpl) {
     var bookName by remember { mutableStateOf("") }
     var authorName by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -65,12 +66,20 @@ fun AddUserScreen(navController: NavController, repository: LocalBookRepositoryI
                 modifier = Modifier.fillMaxWidth()
             )
 
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text(stringResource(id = R.string.label_description)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = {
-                    if (bookName.isNotBlank() && authorName.isNotBlank()) {
-                        repository.addBook(Book("", bookName, authorName))
+                    if (description.isNotBlank() && bookName.isNotBlank() && authorName.isNotBlank()) {
+                        repository.addBook(Book("", bookName, description, authorName))
                         navController.popBackStack()
                     }
                 },

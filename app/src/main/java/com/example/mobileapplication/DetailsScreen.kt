@@ -42,6 +42,7 @@ fun DetailsScreen(
 
     var bookName by remember { mutableStateOf(book.bookName) }
     var authorName by remember { mutableStateOf(book.authorName) }
+    var description by remember { mutableStateOf(book.description) }
 
     Scaffold(
         topBar = {
@@ -74,7 +75,7 @@ fun DetailsScreen(
                 value = bookName,
                 onValueChange = { bookName = it },
                 label = { Text(stringResource(id = R.string.label_book_name)) },
-                singleLine = true, // ОДНА СТРОКА
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -82,7 +83,15 @@ fun DetailsScreen(
                 value = authorName,
                 onValueChange = { authorName = it },
                 label = { Text(stringResource(id = R.string.label_author_name)) },
-                singleLine = true, // ОДНА СТРОКА
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text(stringResource(id = R.string.label_description)) },
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -90,7 +99,7 @@ fun DetailsScreen(
 
             Button(
                 onClick = {
-                    val updatedBook = book.copy(bookName = bookName, authorName = authorName)
+                    val updatedBook = book.copy(bookName = bookName, authorName = authorName,description = description)
                     repository.updateBook(updatedBook)
                     navController.popBackStack()
                 },
@@ -103,6 +112,7 @@ fun DetailsScreen(
                 onClick = {
                     bookName = ""
                     authorName = ""
+                    description = ""
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

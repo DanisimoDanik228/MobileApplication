@@ -78,9 +78,22 @@ fun UserItem(user: Book, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "ID: ${user.id}", style = MaterialTheme.typography.labelSmall)
-            Text(text = "Название: ${user.bookName}", style = MaterialTheme.typography.titleMedium)
-            Text(text = "Автор: ${user.authorName}", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = stringResource(R.string.user_id, user.id),
+                style = MaterialTheme.typography.labelSmall
+            )
+            Text(
+                text = stringResource(R.string.book_title, user.bookName),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = stringResource(R.string.book_author, user.authorName),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = stringResource(R.string.book_description, user.description),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
