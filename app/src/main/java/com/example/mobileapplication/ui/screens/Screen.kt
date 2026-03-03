@@ -1,4 +1,4 @@
-package com.example.mobileapplication
+package com.example.mobileapplication.ui.screens
 
 sealed class Screen(val route: String) {
      object Main : Screen("main")

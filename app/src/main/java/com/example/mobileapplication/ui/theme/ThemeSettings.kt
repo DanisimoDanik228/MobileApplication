@@ -1,4 +1,4 @@
-package com.example.mobileapplication
+package com.example.mobileapplication.ui.theme
 
 import android.content.Context
 import android.content.SharedPreferences

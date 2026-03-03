@@ -1,4 +1,4 @@
-package com.example.mobileapplication
+package com.example.mobileapplication.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -6,8 +6,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mobileapplication.Repository.LocalBookRepositoryImpl
-import com.example.mobileapplication.Repository.Book
+import com.example.mobileapplication.data.LocalBookRepositoryImpl
+import com.example.mobileapplication.domain.Book
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.res.stringResource
@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.example.mobileapplication.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

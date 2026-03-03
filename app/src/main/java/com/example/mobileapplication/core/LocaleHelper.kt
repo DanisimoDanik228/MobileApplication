@@ -1,10 +1,9 @@
-package com.example.mobileapplication
+package com.example.mobileapplication.core
 
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import java.util.Locale
-
 
 object LocaleHelper {
     private const val SELECTED_LANGUAGE = "Locale.Helper.Selected.Language"
@@ -16,7 +15,7 @@ object LocaleHelper {
 
     fun onAttach(context: Context): Context? {
         val lang = getPersistedData(context, Locale.getDefault().getLanguage())
-        return LocaleHelper.updateResources(context, lang!!)
+        return updateResources(context, lang!!)
     }
 
     private fun getPersistedData(context: Context, defaultLanguage: String?): String? {

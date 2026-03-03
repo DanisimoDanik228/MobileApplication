@@ -15,7 +15,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.mobileapplication.Repository.LocalBookRepositoryImpl
+import com.example.mobileapplication.core.LocaleHelper
+import com.example.mobileapplication.data.LocalBookRepositoryImpl
+import com.example.mobileapplication.ui.screens.AddUserScreen
+import com.example.mobileapplication.ui.screens.DetailsScreen
+import com.example.mobileapplication.ui.screens.MainScreen
+import com.example.mobileapplication.ui.screens.Screen
+import com.example.mobileapplication.ui.screens.SettingsScreen
 // Импортируйте вашу тему (название может отличаться, проверьте в ui.theme/Theme.kt)
 import com.example.mobileapplication.ui.theme.MobileApplicationTheme
 
@@ -52,7 +58,7 @@ class MainActivity : ComponentActivity() {
                     startDestination = Screen.Main.route
                 ) {
                     composable(Screen.Main.route) {
-                        MainScreen(navController,repository)
+                        MainScreen(navController, repository)
                     }
 
                     composable(Screen.Settings.route) {
@@ -62,7 +68,7 @@ class MainActivity : ComponentActivity() {
                             currentTheme = savedTheme.intValue,
                             onThemeChange = { newTheme ->
                                 sharedPreferences.edit().putInt("theme_mode", newTheme).apply()
-                                 savedTheme.intValue = newTheme
+                                savedTheme.intValue = newTheme
                             }
                         )
                     }
@@ -73,7 +79,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         backStackEntry ->
                         val id = backStackEntry.arguments?.getString("itemId")
-                        DetailsScreen(id, navController,repository)
+                        DetailsScreen(id, navController, repository)
                     }
 
                     composable(Screen.AddUser.route) {

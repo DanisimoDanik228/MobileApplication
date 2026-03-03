@@ -1,4 +1,4 @@
-package com.example.mobileapplication.Repository
+package com.example.mobileapplication.domain
 
 interface BookRepository {
     fun getBookById(id: String ) : Book?

@@ -1,11 +1,16 @@
-package com.example.mobileapplication.Repository
+package com.example.mobileapplication.data
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
+import com.example.mobileapplication.domain.Book
+import com.example.mobileapplication.domain.BookRepository
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
-import com.google.gson.Gson
 import java.util.UUID
+import kotlin.collections.addAll
+import kotlin.text.clear
+import kotlin.text.set
 
 class LocalBookRepositoryImpl(context: Context) : BookRepository {
     private val gson = Gson()
