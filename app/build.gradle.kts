@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -37,6 +38,22 @@ android {
     buildFeatures {
         compose = true
     }
+
+    sourceSets {
+        getByName("main") {
+            kotlin.srcDirs("build/generated/ksp/main/kotlin")
+        }
+        getByName("debug") {
+            kotlin.srcDirs("build/generated/ksp/debug/kotlin")
+        }
+        getByName("release") {
+            kotlin.srcDirs("build/generated/ksp/release/kotlin")
+        }
+    }
+}
+
+ksp {
+    arg("allow-kotlin-source-sets", "false")
 }
 
 dependencies {
@@ -59,4 +76,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 }
