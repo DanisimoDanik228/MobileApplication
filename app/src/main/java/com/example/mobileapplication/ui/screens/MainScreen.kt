@@ -4,10 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.mobileapplication.ui.viewmodels.BookViewModel
 import com.example.mobileapplication.data.local.AppDatabase
 import com.example.mobileapplication.R
 import com.example.mobileapplication.domain.model.Book
@@ -15,8 +19,8 @@ import com.example.mobileapplication.domain.repository.BookRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController, db: BookRepository) {
-    val users = db.getAllBooks()
+fun MainScreen(navController: NavController, viewModel: BookViewModel) {
+    val books by viewModel.books.collectAsState()
 
     Scaffold(
         topBar = {
@@ -41,24 +45,14 @@ fun MainScreen(navController: NavController, db: BookRepository) {
                 Text(stringResource(id = R.string.go_to_settings))
             }
 
-            Button(
-                onClick = { db.deleteAll() },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
-                )
-            ) {
-                Text(stringResource(id = R.string.clear_all_records))
-            }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(users.size) { index ->
-                    val book = users[index]
+                items(books.size) { index ->
+                    val book = books[index]
                     UserItem(
                         user = book,
                         onClick = {

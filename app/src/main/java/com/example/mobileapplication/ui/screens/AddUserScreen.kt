@@ -16,13 +16,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.example.mobileapplication.ui.viewmodels.BookViewModel
 import com.example.mobileapplication.data.local.AppDatabase
 import com.example.mobileapplication.R
 import com.example.mobileapplication.domain.repository.BookRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddUserScreen(navController: NavController, db: BookRepository) {
+fun AddUserScreen(navController: NavController, viewModel: BookViewModel) {
     var bookName by remember { mutableStateOf("") }
     var authorName by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -82,7 +83,7 @@ fun AddUserScreen(navController: NavController, db: BookRepository) {
                 onClick = {
                     if (description.isNotBlank() && bookName.isNotBlank() && authorName.isNotBlank()) {
 
-                        db.insertBook(Book(0,bookName, description, authorName))
+                        viewModel.insertBook(bookName, description, authorName)
                         navController.popBackStack()
                     }
                 },

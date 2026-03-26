@@ -18,7 +18,9 @@ import androidx.navigation.navArgument
 import androidx.room.Room
 import com.example.mobileapplication.core.LocaleHelper
 import com.example.mobileapplication.data.local.AppDatabase
+import com.example.mobileapplication.data.remote.RetrofitClient
 import com.example.mobileapplication.data.repository.DbBookRepository
+import com.example.mobileapplication.data.repository.RemoteBookRepository
 import com.example.mobileapplication.domain.model.Book
 import com.example.mobileapplication.ui.screens.AddUserScreen
 import com.example.mobileapplication.ui.screens.DetailsScreen
@@ -27,6 +29,7 @@ import com.example.mobileapplication.ui.screens.Screen
 import com.example.mobileapplication.ui.screens.SettingsScreen
 // Импортируйте вашу тему (название может отличаться, проверьте в ui.theme/Theme.kt)
 import com.example.mobileapplication.ui.theme.MobileApplicationTheme
+import com.example.mobileapplication.ui.viewmodels.BookViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -37,18 +40,24 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "books"
-        )
-        .fallbackToDestructiveMigration()
-        .allowMainThreadQueries()
-        .build()
-
-        val dbbook = DbBookRepository(db.bookDao())
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+//        val db = Room.databaseBuilder(
+//            applicationContext,
+//            AppDatabase::class.java,
+//            "books"
+//        )
+//        .fallbackToDestructiveMigration()
+//        .allowMainThreadQueries()
+//        .build()
+//        val dbbook = DbBookRepository(db.bookDao())
+//        val repository = DbBookRepository(db.bookDao())
+
+        val apiService = RetrofitClient.apiService
+        val repository = RemoteBookRepository(apiService)
+
+        val viewModel = BookViewModel(repository)
 
         sharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE)
 
@@ -70,7 +79,7 @@ class MainActivity : ComponentActivity() {
                     startDestination = Screen.Main.route
                 ) {
                     composable(Screen.Main.route) {
-                        MainScreen(navController, dbbook)
+                        MainScreen(navController, viewModel)
                     }
 
                     composable(Screen.Settings.route) {
@@ -92,11 +101,11 @@ class MainActivity : ComponentActivity() {
                         backStackEntry ->
                         val idString = backStackEntry.arguments?.getString("itemId")
                         val id :Int = idString?.toIntOrNull() ?: 0
-                        DetailsScreen(id, navController, dbbook)
+                        DetailsScreen(id, navController, viewModel)
                     }
 
                     composable(Screen.AddUser.route) {
-                        AddUserScreen(navController, dbbook)
+                        AddUserScreen(navController, viewModel)
                     }
                 }
             }

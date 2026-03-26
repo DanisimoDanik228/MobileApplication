@@ -5,27 +5,23 @@ import com.example.mobileapplication.domain.model.Book
 import com.example.mobileapplication.domain.repository.BookRepository
 
 class DbBookRepository(private val bookDao: BookDao) : BookRepository {
-    override fun insertBook(book: Book): Long {
+    override suspend fun insertBook(book: Book): Long {
         return bookDao.insertBook(book)
     }
 
-    override fun getAllBooks(): List<Book> {
+    override suspend fun getAllBooks(): List<Book> {
         return bookDao.getAllBooks()
     }
 
-    override fun deleteBook(id: Int): Int {
+    override suspend fun deleteBook(id: Int): Int {
         return bookDao.deleteBook(id)
     }
 
-    override fun deleteAll(): Int {
-        return bookDao.deleteAll()
-    }
-
-    override fun getBookById(id: Int): Book? {
+    override suspend fun getBookById(id: Int): Book? {
         return bookDao.getBookById(id)
     }
 
-    override fun updateBook(book: Book): Int {
+    override suspend fun updateBook(book: Book): Int {
         return bookDao.updateBook(book)
     }
 }

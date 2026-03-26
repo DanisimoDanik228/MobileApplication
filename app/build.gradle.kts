@@ -108,4 +108,10 @@ dependencies {
 
     // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$room_version")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Конвертер JSON (Gson)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Логирование запросов
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 }

@@ -5,15 +5,13 @@ import androidx.room.Update
 import com.example.mobileapplication.domain.model.Book
 
 interface BookRepository {
-    fun insertBook(book: Book) : Long
+    suspend fun insertBook(book: Book) : Long
 
-    fun getAllBooks(): List<Book>
+    suspend fun getAllBooks(): List<Book>
 
-    fun deleteBook(id: Int) : Int
+    suspend fun deleteBook(id: Int) : Int
 
-    fun deleteAll(): Int
+    suspend fun getBookById(id: Int): Book?
 
-    fun getBookById(id: Int): Book?
-
-    fun updateBook(book: Book): Int
+    suspend fun updateBook(book: Book): Int
 }
