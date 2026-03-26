@@ -8,14 +8,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.mobileapplication.data.local.AppDatabase
 import com.example.mobileapplication.R
-import com.example.mobileapplication.data.LocalBookRepositoryImpl
-import com.example.mobileapplication.domain.Book
+import com.example.mobileapplication.domain.model.Book
+import com.example.mobileapplication.domain.repository.BookRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController, repository: LocalBookRepositoryImpl) {
-    val users = repository.getAllBooks()
+fun MainScreen(navController: NavController, db: BookRepository) {
+    val users = db.getAllBooks()
 
     Scaffold(
         topBar = {
@@ -41,7 +42,7 @@ fun MainScreen(navController: NavController, repository: LocalBookRepositoryImpl
             }
 
             Button(
-                onClick = { repository.clearAll() },
+                onClick = { db.deleteAll() },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error

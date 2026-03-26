@@ -9,22 +9,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mobileapplication.data.LocalBookRepositoryImpl
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.example.mobileapplication.data.local.AppDatabase
 import com.example.mobileapplication.R
+import com.example.mobileapplication.domain.repository.BookRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(
-    itemId: String?,
+    itemId: Int,
     navController: NavController,
-    repository: LocalBookRepositoryImpl
+    db: BookRepository
 ) {
-    val book = remember(itemId) { repository.getBookById(itemId ?: "") }
+    val book = remember(itemId) { db.getBookById(itemId) }
 
     if (book == null) {
         Scaffold(
@@ -100,7 +101,7 @@ fun DetailsScreen(
             Button(
                 onClick = {
                     val updatedBook = book.copy(bookName = bookName, authorName = authorName,description = description)
-                    repository.updateBook(updatedBook)
+                    db.updateBook(updatedBook)
                     navController.popBackStack()
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -121,7 +122,7 @@ fun DetailsScreen(
 
             Button(
                 onClick = {
-                    repository.deleteBook(book.id)
+                    db.deleteBook(book.id)
                     navController.popBackStack()
                 },
                 modifier = Modifier.fillMaxWidth(),

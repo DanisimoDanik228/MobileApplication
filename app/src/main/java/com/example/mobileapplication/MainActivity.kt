@@ -15,8 +15,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.room.Room
 import com.example.mobileapplication.core.LocaleHelper
-import com.example.mobileapplication.data.LocalBookRepositoryImpl
+import com.example.mobileapplication.data.local.AppDatabase
+import com.example.mobileapplication.data.repository.DbBookRepository
+import com.example.mobileapplication.domain.model.Book
 import com.example.mobileapplication.ui.screens.AddUserScreen
 import com.example.mobileapplication.ui.screens.DetailsScreen
 import com.example.mobileapplication.ui.screens.MainScreen
@@ -34,6 +37,16 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "books"
+        )
+        .fallbackToDestructiveMigration()
+        .allowMainThreadQueries()
+        .build()
+
+        val dbbook = DbBookRepository(db.bookDao())
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
@@ -52,13 +65,12 @@ class MainActivity : ComponentActivity() {
 
             MobileApplicationTheme(darkTheme = darkTheme) {
                 val navController = rememberNavController()
-                val repository = LocalBookRepositoryImpl(applicationContext);
                 NavHost(
                     navController = navController,
                     startDestination = Screen.Main.route
                 ) {
                     composable(Screen.Main.route) {
-                        MainScreen(navController, repository)
+                        MainScreen(navController, dbbook)
                     }
 
                     composable(Screen.Settings.route) {
@@ -78,12 +90,13 @@ class MainActivity : ComponentActivity() {
                         arguments = listOf(navArgument("itemId") { type = NavType.StringType })
                     ) {
                         backStackEntry ->
-                        val id = backStackEntry.arguments?.getString("itemId")
-                        DetailsScreen(id, navController, repository)
+                        val idString = backStackEntry.arguments?.getString("itemId")
+                        val id :Int = idString?.toIntOrNull() ?: 0
+                        DetailsScreen(id, navController, dbbook)
                     }
 
                     composable(Screen.AddUser.route) {
-                        AddUserScreen(navController, repository)
+                        AddUserScreen(navController, dbbook)
                     }
                 }
             }
