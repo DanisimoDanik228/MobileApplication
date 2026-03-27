@@ -4,7 +4,7 @@ import com.example.mobileapplication.data.local.BookDao
 import com.example.mobileapplication.domain.model.Book
 import com.example.mobileapplication.domain.repository.BookRepository
 
-class DbBookRepository(private val bookDao: BookDao) : BookRepository {
+class RoomBookRepository(private val bookDao: BookDao) : BookRepository {
     override suspend fun insertBook(book: Book): Long {
         return bookDao.insertBook(book)
     }
