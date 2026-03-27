@@ -3,9 +3,10 @@ package com.example.mobileapplication.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh // Нужно добавить импорт
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -13,29 +14,42 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mobileapplication.ui.viewmodels.BookViewModel
-import com.example.mobileapplication.data.local.AppDatabase
 import com.example.mobileapplication.R
 import com.example.mobileapplication.domain.model.Book
-import com.example.mobileapplication.domain.repository.BookRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, viewModel: BookViewModel) {
     val books by viewModel.books.collectAsState()
-
     val isOnline by viewModel.isOnline.collectAsState()
     val ping by viewModel.ping.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     Scaffold(
         topBar = {
-            TopAppBar(title = {
-                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                    Text(stringResource(id = R.string.main_title))
-                    Spacer(modifier = Modifier.width(16.dp))
-                    // Индикатор статуса
-                    NetworkStatusBadge(isOnline = isOnline, ping = ping)
+            TopAppBar(
+                title = {
+                    Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                        Text(stringResource(id = R.string.main_title))
+                        Spacer(modifier = Modifier.width(16.dp))
+                        NetworkStatusBadge(isOnline = isOnline, ping = ping)
+                    }
+                },
+                // КНОПКА ОБНОВЛЕНИЯ ЗДЕСЬ
+                actions = {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        IconButton(onClick = { viewModel.getAllBooks() }) {
+                            Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        }
+                    }
                 }
-            })
+            )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { navController.navigate(Screen.AddUser.route) }) {
@@ -58,23 +72,32 @@ fun MainScreen(navController: NavController, viewModel: BookViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(books.size) { index ->
-                    val book = books[index]
-                    UserItem(
-                        user = book,
-                        onClick = {
-                            navController.navigate(Screen.Details.createRoute(book.id.toString()))
-                        }
-                    )
+            if (books.isEmpty()) {
+                // Можно добавить заглушку, если список пуст
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
+                    Text("Список пуст")
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(books.size) { index ->
+                        val book = books[index]
+                        UserItem(
+                            user = book,
+                            onClick = {
+                                navController.navigate(Screen.Details.createRoute(book.id.toString()))
+                            }
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+// ... остальной код (UserItem, NetworkStatusBadge) остается без изменений
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

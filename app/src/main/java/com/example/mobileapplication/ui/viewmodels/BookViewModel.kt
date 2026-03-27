@@ -18,17 +18,10 @@ class BookViewModel(
     private val remoteRepo: BookRepository,
     private val localRepo: BookRepository
 ) : ViewModel() {
+
+    // 1. Сначала объявляем ВСЕ переменные состояния
     private val _isRemoteMode = MutableStateFlow(true)
     val isRemoteMode = _isRemoteMode.asStateFlow()
-
-    // Вспомогательное свойство, которое выбирает текущий репозиторий
-    private val currentRepo: BookRepository
-        get() = if (_isRemoteMode.value) remoteRepo else localRepo
-
-    fun setRepositoryMode(isRemote: Boolean) {
-        _isRemoteMode.value = isRemote
-        getAllBooks() // Сразу обновляем список под новый источник
-    }
 
     private val _isOnline = MutableStateFlow(false)
     val isOnline = _isOnline.asStateFlow()
@@ -39,36 +32,48 @@ class BookViewModel(
     private val _books = MutableStateFlow<List<Book>>(emptyList())
     val books: StateFlow<List<Book>> = _books.asStateFlow()
 
-    // Состояние конкретной книги (например, для экрана деталей)
     private val _selectedBook = MutableStateFlow<Book?>(null)
     val selectedBook: StateFlow<Book?> = _selectedBook.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false) // Теперь это выше init
+    val isLoading = _isLoading.asStateFlow()
+
+    private val currentRepo: BookRepository
+        get() = if (_isRemoteMode.value) remoteRepo else localRepo
+
+    // 2. И только в самом конце вызываем init
     init {
         startNetworkMonitoring()
         getAllBooks()
     }
 
+    fun setRepositoryMode(isRemote: Boolean) {
+        _isRemoteMode.value = isRemote
+        getAllBooks() // Сразу обновляем список под новый источник
+    }
+
+    // 3. Далее идут функции
     private fun startNetworkMonitoring() {
         viewModelScope.launch(Dispatchers.IO) {
             while (true) {
                 val online = networkHelper.isNetworkAvailable()
                 _isOnline.value = online
-                if (online) {
-                    _ping.value = networkHelper.getPing()
-                } else {
-                    _ping.value = "∞"
-                }
-
-                delay(Constants.NETWORK_CHECK_FREQUENCY) // Проверяем каждые 5 секунд
+                _ping.value = if (online) networkHelper.getPing() else "∞"
+                delay(Constants.NETWORK_CHECK_FREQUENCY)
             }
         }
     }
 
-    // 1. ПОЛУЧИТЬ ВСЕ КНИГИ
     fun getAllBooks() {
         viewModelScope.launch {
-            val list = currentRepo.getAllBooks()
-            _books.value = list
+            _isLoading.value = true // Теперь тут не будет ошибки
+            try {
+                _books.value = currentRepo.getAllBooks()
+            } catch (e: Exception) {
+                // Хорошо бы добавить обработку ошибок
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
