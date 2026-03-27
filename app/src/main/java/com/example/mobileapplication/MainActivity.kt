@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
 import com.example.mobileapplication.core.LocaleHelper
+import com.example.mobileapplication.core.NetworkHelper
 import com.example.mobileapplication.data.local.AppDatabase
 import com.example.mobileapplication.data.remote.RetrofitClient
 import com.example.mobileapplication.data.repository.DbBookRepository
@@ -43,6 +44,8 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
+        val networkHelper = NetworkHelper(applicationContext)
+
 //        val db = Room.databaseBuilder(
 //            applicationContext,
 //            AppDatabase::class.java,
@@ -55,9 +58,9 @@ class MainActivity : ComponentActivity() {
 //        val repository = DbBookRepository(db.bookDao())
 
         val apiService = RetrofitClient.apiService
-        val repository = RemoteBookRepository(apiService)
+        val repository = RemoteBookRepository(apiService,networkHelper)
 
-        val viewModel = BookViewModel(repository)
+        val viewModel = BookViewModel(repository,networkHelper)
 
         sharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE)
 

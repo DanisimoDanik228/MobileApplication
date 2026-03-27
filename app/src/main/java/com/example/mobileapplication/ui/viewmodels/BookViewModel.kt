@@ -2,16 +2,27 @@ package com.example.mobileapplication.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mobileapplication.core.NetworkHelper
 import com.example.mobileapplication.domain.model.Book
 import com.example.mobileapplication.domain.repository.BookRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class BookViewModel(private val repository: BookRepository) : ViewModel() {
+class BookViewModel(
+    private val repository: BookRepository,
+    private val networkHelper: NetworkHelper
+) : ViewModel() {
 
-    // Состояние списка книг для отображения на экране
+    private val _isOnline = MutableStateFlow(false)
+    val isOnline = _isOnline.asStateFlow()
+
+    private val _ping = MutableStateFlow("-")
+    val ping = _ping.asStateFlow()
+
     private val _books = MutableStateFlow<List<Book>>(emptyList())
     val books: StateFlow<List<Book>> = _books.asStateFlow()
 
@@ -20,8 +31,23 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
     val selectedBook: StateFlow<Book?> = _selectedBook.asStateFlow()
 
     init {
-        // Автоматическая загрузка при старте
+        startNetworkMonitoring()
         getAllBooks()
+    }
+
+    private fun startNetworkMonitoring() {
+        viewModelScope.launch(Dispatchers.IO) {
+            while (true) {
+                val online = networkHelper.isNetworkAvailable()
+                _isOnline.value = online
+                if (online) {
+                    _ping.value = networkHelper.getPing()
+                } else {
+                    _ping.value = "∞"
+                }
+                delay(5000) // Проверяем каждые 5 секунд
+            }
+        }
     }
 
     // 1. ПОЛУЧИТЬ ВСЕ КНИГИ

@@ -1,5 +1,6 @@
 package com.example.mobileapplication.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -22,9 +23,19 @@ import com.example.mobileapplication.domain.repository.BookRepository
 fun MainScreen(navController: NavController, viewModel: BookViewModel) {
     val books by viewModel.books.collectAsState()
 
+    val isOnline by viewModel.isOnline.collectAsState()
+    val ping by viewModel.ping.collectAsState()
+
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(stringResource(id = R.string.main_title)) })
+            TopAppBar(title = {
+                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                    Text(stringResource(id = R.string.main_title))
+                    Spacer(modifier = Modifier.width(16.dp))
+                    // Индикатор статуса
+                    NetworkStatusBadge(isOnline = isOnline, ping = ping)
+                }
+            })
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { navController.navigate(Screen.AddUser.route) }) {
@@ -89,6 +100,31 @@ fun UserItem(user: Book, onClick: () -> Unit) {
             Text(
                 text = stringResource(R.string.book_description, user.description),
                 style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+@Composable
+fun NetworkStatusBadge(isOnline: Boolean, ping: String) {
+    Surface(
+        color = if (isOnline) androidx.compose.ui.graphics.Color(0xFF4CAF50) else androidx.compose.ui.graphics.Color.Red,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .background(androidx.compose.ui.graphics.Color.White, androidx.compose.foundation.shape.CircleShape)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = if (isOnline) "Online | $ping" else "Offline",
+                color = androidx.compose.ui.graphics.Color.White,
+                style = MaterialTheme.typography.labelSmall
             )
         }
     }
