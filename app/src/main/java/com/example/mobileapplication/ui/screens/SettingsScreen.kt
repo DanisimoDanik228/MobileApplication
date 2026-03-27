@@ -16,7 +16,10 @@ fun SettingsScreen(
     navController: NavController,
     onLanguageChange: (String) -> Unit,
     currentTheme: Int,
-    onThemeChange: (Int) -> Unit
+    onThemeChange: (Int) -> Unit,
+
+    isRemoteMode: Boolean,
+    onRepositoryModeChange: (Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -63,6 +66,32 @@ fun SettingsScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = currentTheme == 0, onClick = { onThemeChange(0) })
                     Text(stringResource(id = R.string.theme_system), modifier = Modifier.padding(start = 8.dp))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // НОВАЯ СЕКЦИЯ: ВЫБОР БАЗЫ ДАННЫХ
+            Text(
+                text = stringResource(id = R.string.database_mode_label), // Добавьте в strings.xml
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = isRemoteMode,
+                        onClick = { onRepositoryModeChange(true) }
+                    )
+                    Text(text = stringResource(id = R.string.database_mode_remote), modifier = Modifier.padding(start = 8.dp))
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = !isRemoteMode,
+                        onClick = { onRepositoryModeChange(false) }
+                    )
+                    Text(text = stringResource(id = R.string.database_mode_local), modifier = Modifier.padding(start = 8.dp))
                 }
             }
 

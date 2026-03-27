@@ -14,9 +14,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class BookViewModel(
-    private val repository: BookRepository,
-    private val networkHelper: NetworkHelper
+    private val networkHelper: NetworkHelper,
+    private val remoteRepo: BookRepository,
+    private val localRepo: BookRepository
 ) : ViewModel() {
+    private val _isRemoteMode = MutableStateFlow(true)
+    val isRemoteMode = _isRemoteMode.asStateFlow()
+
+    // Вспомогательное свойство, которое выбирает текущий репозиторий
+    private val currentRepo: BookRepository
+        get() = if (_isRemoteMode.value) remoteRepo else localRepo
+
+    fun setRepositoryMode(isRemote: Boolean) {
+        _isRemoteMode.value = isRemote
+        getAllBooks() // Сразу обновляем список под новый источник
+    }
 
     private val _isOnline = MutableStateFlow(false)
     val isOnline = _isOnline.asStateFlow()
@@ -55,7 +67,7 @@ class BookViewModel(
     // 1. ПОЛУЧИТЬ ВСЕ КНИГИ
     fun getAllBooks() {
         viewModelScope.launch {
-            val list = repository.getAllBooks()
+            val list = currentRepo.getAllBooks()
             _books.value = list
         }
     }
@@ -64,7 +76,7 @@ class BookViewModel(
     fun insertBook(name: String, author: String, desc: String) {
         viewModelScope.launch {
             val book = Book(id = 0, bookName = name, authorName = author, description = desc)
-            val newId = repository.insertBook(book) // Возвращает Long (ID в Room)
+            val newId = currentRepo.insertBook(book) // Возвращает Long (ID в Room)
             if (newId > 0) {
                 getAllBooks() // Обновляем список, если добавлено успешно
             }
@@ -74,7 +86,7 @@ class BookViewModel(
     // 3. УДАЛИТЬ КНИГУ ПО ID
     fun deleteBook(id: Int) {
         viewModelScope.launch {
-            val deletedRows = repository.deleteBook(id) // Возвращает Int (количество удаленных)
+            val deletedRows = currentRepo.deleteBook(id) // Возвращает Int (количество удаленных)
             if (deletedRows > 0) {
                 getAllBooks() // Обновляем список
             }
@@ -84,7 +96,7 @@ class BookViewModel(
     // 5. ПОЛУЧИТЬ КНИГУ ПО ID (например, для открытия деталей)
     fun getBookById(id: Int) {
         viewModelScope.launch {
-            val book = repository.getBookById(id)
+            val book = currentRepo.getBookById(id)
             _selectedBook.value = book
         }
     }
@@ -92,7 +104,7 @@ class BookViewModel(
     // 6. ОБНОВИТЬ КНИГУ
     fun updateBook(book: Book) {
         viewModelScope.launch {
-            val updatedRows = repository.updateBook(book) // Возвращает Int
+            val updatedRows = currentRepo.updateBook(book) // Возвращает Int
             if (updatedRows > 0) {
                 getAllBooks() // Обновляем список
             }

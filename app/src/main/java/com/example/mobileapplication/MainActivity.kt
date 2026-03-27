@@ -7,6 +7,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -20,7 +22,7 @@ import com.example.mobileapplication.core.LocaleHelper
 import com.example.mobileapplication.core.NetworkHelper
 import com.example.mobileapplication.data.local.AppDatabase
 import com.example.mobileapplication.data.remote.RetrofitClient
-import com.example.mobileapplication.data.repository.DbBookRepository
+import com.example.mobileapplication.data.repository.RoomBookRepository
 import com.example.mobileapplication.data.repository.RemoteBookRepository
 import com.example.mobileapplication.domain.model.Book
 import com.example.mobileapplication.ui.screens.AddUserScreen
@@ -46,25 +48,27 @@ class MainActivity : ComponentActivity() {
 
         val networkHelper = NetworkHelper(applicationContext)
 
-//        val db = Room.databaseBuilder(
-//            applicationContext,
-//            AppDatabase::class.java,
-//            "books"
-//        )
-//        .fallbackToDestructiveMigration()
-//        .allowMainThreadQueries()
-//        .build()
-//        val dbbook = DbBookRepository(db.bookDao())
-//        val repository = DbBookRepository(db.bookDao())
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "books"
+        )
+        .fallbackToDestructiveMigration()
+        .allowMainThreadQueries()
+        .build()
 
         val apiService = RetrofitClient.apiService
-        val repository = RemoteBookRepository(apiService,networkHelper)
 
-        val viewModel = BookViewModel(repository,networkHelper)
+        val roomBook = RoomBookRepository(db.bookDao())
+        val remoteBook = RemoteBookRepository(apiService,networkHelper)
+
+        val viewModel = BookViewModel(networkHelper,remoteBook,roomBook)
 
         sharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE)
 
         setContent {
+            val isRemote by viewModel.isRemoteMode.collectAsState()
+
             val savedTheme = remember {
                 mutableIntStateOf(sharedPreferences.getInt("theme_mode", 0))
             }
@@ -93,7 +97,9 @@ class MainActivity : ComponentActivity() {
                             onThemeChange = { newTheme ->
                                 sharedPreferences.edit().putInt("theme_mode", newTheme).apply()
                                 savedTheme.intValue = newTheme
-                            }
+                            },
+                            isRemoteMode = isRemote,
+                            onRepositoryModeChange = { viewModel.setRepositoryMode(it) }
                         )
                     }
 

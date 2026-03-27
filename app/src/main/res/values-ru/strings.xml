@@ -38,4 +38,8 @@
     <string name="book_title">Название: %1$s</string>
     <string name="book_author">Автор: %1$s</string>
     <string name="book_description">Описание: %1$s</string>
+
+    <string name="database_mode_label">БД тип</string>
+    <string name="database_mode_local">Локальная бд</string>
+    <string name="database_mode_remote">Удалённая бд(ngrok)</string>
 </resources>

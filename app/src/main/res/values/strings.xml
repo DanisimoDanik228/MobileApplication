@@ -39,4 +39,8 @@
     <string name="book_title">Title: %1$s</string>
     <string name="book_author">Author: %1$s</string>
     <string name="book_description">Description: %1$s</string>
+
+    <string name="database_mode_label">Db type</string>
+    <string name="database_mode_local">Local bd</string>
+    <string name="database_mode_remote">Remote bd(ngrok)</string>
 </resources>
