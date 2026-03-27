@@ -2,6 +2,7 @@ package com.example.mobileapplication.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mobileapplication.core.Constants
 import com.example.mobileapplication.core.NetworkHelper
 import com.example.mobileapplication.domain.model.Book
 import com.example.mobileapplication.domain.repository.BookRepository
@@ -45,7 +46,8 @@ class BookViewModel(
                 } else {
                     _ping.value = "∞"
                 }
-                delay(5000) // Проверяем каждые 5 секунд
+
+                delay(Constants.NETWORK_CHECK_FREQUENCY) // Проверяем каждые 5 секунд
             }
         }
     }

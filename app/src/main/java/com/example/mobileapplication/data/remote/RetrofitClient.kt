@@ -1,13 +1,12 @@
 package com.example.mobileapplication.data.remote
 
+import com.example.mobileapplication.core.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "https://pacifistic-campbell-sordidly.ngrok-free.dev/" // Вставьте сюда ваш URL от ngrok
-
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
@@ -24,7 +23,7 @@ object RetrofitClient {
 
     val apiService: BookApiService by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(Constants.NGROK_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(httpClient)
             .build()
