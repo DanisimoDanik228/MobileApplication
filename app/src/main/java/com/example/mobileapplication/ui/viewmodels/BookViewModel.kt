@@ -41,8 +41,7 @@ class BookViewModel(
     private val _isLoading = MutableStateFlow(false) // Теперь это выше init
     val isLoading = _isLoading.asStateFlow()
 
-    private val currentRepo: BookRepository
-        get() = if (_isRemoteMode.value) remoteRepo else localRepo
+    private var currentRepo: BookRepository = remoteRepo
 
     // 2. И только в самом конце вызываем init
     init {
@@ -73,8 +72,35 @@ class BookViewModel(
     }
 
     fun setRepositoryMode(isRemote: Boolean) {
-        _isRemoteMode.value = isRemote
-        getAllBooks() // Сразу обновляем список под новый источник
+        viewModelScope.launch {
+            if (!isRemote) {
+                // МЫ ПЕРЕКЛЮЧАЕМСЯ НА ЛОКАЛЬНУЮ БД
+                // Проверяем интернет перед копированием
+                if (networkHelper.isNetworkAvailable()) {
+                    _isLoading.value = true
+                    try {
+                        // 1. Получаем все данные с сервера
+                        val remoteData = remoteRepo.getAllBooks()
+
+                        // 2. Очищаем старую локальную базу (чтобы не было дубликатов)
+                        localRepo.deleteAllBooks()
+
+                        // 3. Копируем данные в Room
+                        remoteData.forEach { book ->
+                            localRepo.insertBook(book)
+                        }
+                    } finally {
+                        _isLoading.value = false
+                    }
+                }
+            }
+
+            _isRemoteMode.value = isRemote
+            currentRepo = if (isRemote) remoteRepo else localRepo
+
+            // Обновляем список на экране из нового источника
+            getAllBooks()
+        }
     }
 
     // 3. Далее идут функции

@@ -6,20 +6,20 @@ import com.example.mobileapplication.domain.repository.BookRepository
 @Dao
 interface BookDao {
     @Insert
-    fun insertBook(book: Book) : Long
+    suspend fun insertBook(book: Book) : Long
 
     @Query("SELECT * FROM books")
-    fun getAllBooks(): List<Book>
+    suspend fun getAllBooks(): List<Book>
 
     @Query("DELETE FROM books WHERE id = :id")
-    fun deleteBook(id: Int) : Int
+    suspend fun deleteBook(id: Int) : Int
 
     @Query("DELETE FROM books")
-    fun deleteAll(): Int
+    suspend fun deleteAll(): Int
 
     @Query("SELECT * FROM books WHERE id = :id")
-    fun getBookById(id: Int): Book?
+    suspend fun getBookById(id: Int): Book?
 
     @Update
-    fun updateBook(book: Book): Int
+    suspend fun updateBook(book: Book): Int
 }

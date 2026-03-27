@@ -82,4 +82,28 @@ class RemoteBookRepository(
             0
         }
     }
+
+    override suspend fun deleteAllBooks(): Int {
+        if (!networkHelper.isNetworkAvailable()) return 0
+
+        var deletedCount = 0
+        try {
+            // 1. Получаем актуальный список всех книг с сервера
+            val allBooks = apiService.getBooks()
+
+            // 2. Проходим циклом по списку и удаляем каждую книгу на сервере по ID
+            allBooks.forEach { book ->
+                val response = apiService.deleteBook(book.id)
+                if (response.isSuccessful) {
+                    deletedCount++ // Считаем только успешные удаления
+                }
+            }
+            Log.d("REPO", "Сервер очищен. Удалено записей: $deletedCount")
+
+        } catch (e: Exception) {
+            Log.e("REPO", "Ошибка при массовом удалении на сервере: ${e.message}")
+        }
+
+        return deletedCount // Возвращаем общее число удаленных книг
+    }
 }

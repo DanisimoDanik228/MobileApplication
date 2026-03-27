@@ -14,4 +14,6 @@ interface BookRepository {
     suspend fun getBookById(id: Int): Book?
 
     suspend fun updateBook(book: Book): Int
+
+    suspend fun deleteAllBooks(): Int
 }

@@ -24,4 +24,8 @@ class RoomBookRepository(private val bookDao: BookDao) : BookRepository {
     override suspend fun updateBook(book: Book): Int {
         return bookDao.updateBook(book)
     }
+
+    override suspend fun deleteAllBooks(): Int {
+        return bookDao.deleteAll()
+    }
 }
