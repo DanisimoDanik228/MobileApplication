@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobileapplication.core.Constants
 import com.example.mobileapplication.core.NetworkHelper
+import com.example.mobileapplication.data.remote.WeatherApiService
 import com.example.mobileapplication.domain.model.Book
 import com.example.mobileapplication.domain.repository.BookRepository
 import kotlinx.coroutines.Dispatchers
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class BookViewModel(
     private val networkHelper: NetworkHelper,
@@ -45,6 +48,28 @@ class BookViewModel(
     init {
         startNetworkMonitoring()
         getAllBooks()
+    }
+
+    private val _weather = MutableStateFlow("..°C")
+    val weather: StateFlow<String> = _weather.asStateFlow()
+
+    // Создай отдельный Retrofit для погоды (так как URL другой)
+    private val weatherApi = Retrofit.Builder()
+        .baseUrl(Constants.WEATHER_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(WeatherApiService::class.java)
+
+    fun fetchWeather() {
+        viewModelScope.launch {
+            try {
+                val response = weatherApi.getWeather()
+                val temp = response.main.temp.toInt()
+                _weather.value = "$temp°C"
+            } catch (e: Exception) {
+                _weather.value = "Err"
+            }
+        }
     }
 
     fun setRepositoryMode(isRemote: Boolean) {

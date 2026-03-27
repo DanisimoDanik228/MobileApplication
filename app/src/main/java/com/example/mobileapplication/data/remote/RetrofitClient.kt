@@ -15,15 +15,14 @@ object RetrofitClient {
         .addInterceptor(logging)
         .addInterceptor { chain ->
             val request = chain.request().newBuilder()
-                .addHeader("ngrok-skip-browser-warning", "true") // Чтобы ngrok не блокировал запрос
-                .build()
+               .build()
             chain.proceed(request)
         }
         .build()
 
     val apiService: BookApiService by lazy {
         Retrofit.Builder()
-            .baseUrl(Constants.NGROK_URL)
+            .baseUrl(Constants.CLOUDFLARETUNNEL_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(httpClient)
             .build()

@@ -26,7 +26,7 @@ class NetworkHelper(private val context: Context) {
         return try {
             // Очищаем URL от https:// и лишних слешей для надежности,
             // но для OkHttp лучше использовать полный URL
-            val url = Constants.NGROK_URL
+            val url = Constants.CLOUDFLARETUNNEL_URL
 
             val client = OkHttpClient.Builder()
                 .connectTimeout(Constants.NETWORK_TIMEOUT, TimeUnit.MILLISECONDS) // Ждем не больше 2 сек
@@ -34,8 +34,7 @@ class NetworkHelper(private val context: Context) {
 
             val request = Request.Builder()
                 .url(url)
-                .head() // Используем HEAD запрос (он быстрее, чем GET, так как не качает тело)
-                .addHeader("ngrok-skip-browser-warning", "true")
+                .head()
                 .build()
 
             val start = System.currentTimeMillis()

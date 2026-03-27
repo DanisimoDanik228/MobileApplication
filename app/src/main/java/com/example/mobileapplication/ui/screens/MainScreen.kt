@@ -3,18 +3,22 @@ package com.example.mobileapplication.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh // Нужно добавить импорт
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mobileapplication.ui.viewmodels.BookViewModel
 import com.example.mobileapplication.R
+import com.example.mobileapplication.core.Constants
 import com.example.mobileapplication.domain.model.Book
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,15 +28,31 @@ fun MainScreen(navController: NavController, viewModel: BookViewModel) {
     val isOnline by viewModel.isOnline.collectAsState()
     val ping by viewModel.ping.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val weatherTemp by viewModel.weather.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchWeather()
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                        Text(stringResource(id = R.string.main_title))
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = stringResource(id = R.string.main_title),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        // 1. Индикатор сети
                         NetworkStatusBadge(isOnline = isOnline, ping = ping)
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        // 2. ТВОЯ ПОГОДА (Вставляем сюда)
+                        WeatherBadge(temp = weatherTemp)
                     }
                 },
                 // КНОПКА ОБНОВЛЕНИЯ ЗДЕСЬ
@@ -97,8 +117,26 @@ fun MainScreen(navController: NavController, viewModel: BookViewModel) {
     }
 }
 
-// ... остальной код (UserItem, NetworkStatusBadge) остается без изменений
-
+@Composable
+fun WeatherBadge(temp: String) {
+    Surface(
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        ) {
+            Text(text = "☁", fontSize = 12.sp) // Можно заменить на иконку
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = Constants.CITY_WEATHER + ": $temp",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        }
+    }
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserItem(user: Book, onClick: () -> Unit) {
