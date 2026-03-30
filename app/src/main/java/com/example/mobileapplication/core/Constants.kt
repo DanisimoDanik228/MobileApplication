@@ -7,5 +7,7 @@ object Constants {
     const val WEATHER_API_KEY = "6925a79742481629ec6edfe0fcdc72b4"
     const val WEATHER_BASE_URL = "https://api.openweathermap.org/"
     const val CITY_WEATHER = "Minsk"
-    //const val CITY_WEATHER = "Vitebsk"
+
+    const val CITY_MINSK = "Minsk"
+    const val CITY_VITEBSK = "Vitebsk"
 }
