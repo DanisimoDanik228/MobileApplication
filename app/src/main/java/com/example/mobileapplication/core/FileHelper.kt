@@ -4,16 +4,33 @@ import android.content.Context
 import android.net.Uri
 import java.io.File
 import java.io.FileOutputStream
+import java.util.UUID
 
-object FileHelper {
-    fun copyUriToInternalStorage(context: Context, uri: Uri): String? {
+class FileHelper(private val context: Context) {
+
+    // Копирует файл из URI (галереи) во внутреннюю память приложения
+    fun saveImageToInternalStorage(uri: Uri): String? {
+        val fileName = "img_${UUID.randomUUID()}.jpg"
+        val file = File(context.filesDir, fileName)
+
         return try {
-            val inputStream = context.contentResolver.openInputStream(uri)
-            val file = File(context.filesDir, "book_img_${System.currentTimeMillis()}.jpg")
-            inputStream?.use { input ->
-                FileOutputStream(file).use { output -> input.copyTo(output) }
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                FileOutputStream(file).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
             }
-            file.absolutePath
-        } catch (e: Exception) { null }
+            file.absolutePath // Возвращаем путь к новому файлу
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    // Удаляет файл из памяти
+    fun deleteFileFromInternalStorage(path: String) {
+        val file = File(path)
+        if (file.exists()) {
+            file.delete()
+        }
     }
 }

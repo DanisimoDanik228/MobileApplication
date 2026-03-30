@@ -51,16 +51,14 @@ fun MainScreen(
     // 2. Состояние списка картинок
     val images by imageViewModel.images.collectAsState()
 
-    // 3. Лаунчер для выбора картинок
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            val newImage = BookImage(0, it.toString())
-            imageViewModel.addImage(newImage)
+            // Просто передаем Uri. ViewModel сама сохранит его в файл и в БД
+            imageViewModel.addImage(it)
         }
     }
-
     Scaffold(
         topBar = {
             TopAppBar(

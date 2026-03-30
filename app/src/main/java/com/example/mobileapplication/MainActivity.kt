@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
+import com.example.mobileapplication.core.FileHelper
 import com.example.mobileapplication.core.LocaleHelper
 import com.example.mobileapplication.core.NetworkHelper
 import com.example.mobileapplication.data.local.AppDatabase
@@ -71,6 +72,8 @@ class MainActivity : ComponentActivity() {
             .fallbackToDestructiveMigration()
             .build()
 
+        val fileHelper = FileHelper(applicationContext)
+
         val apiService = RetrofitClient.apiService
         val bookLocalRepo = RoomBookRepository(db.bookDao())
         val bookRemoteRepo = RemoteBookRepository(apiService, networkHelper)
@@ -84,7 +87,8 @@ class MainActivity : ComponentActivity() {
             sharedPreferences)
 
         val imageViewModel = ImageViewModel(
-            imageLocalRepo
+            imageLocalRepo,
+            fileHelper
         )
 
         setContent {
@@ -102,10 +106,7 @@ class MainActivity : ComponentActivity() {
             val imagePickerLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.GetContent()
             ) { uri ->
-                uri?.let {
-                    // Сохраняем URI как строку (в реальном приложении лучше копировать файл во внутреннюю память)
-                    val newImage = BookImage(0, it.toString())
-                    imageViewModel.addImage(newImage)
+                    uri?.let {imageViewModel.addImage(it)
                 }
             }
 
