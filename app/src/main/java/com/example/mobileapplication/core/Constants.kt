@@ -10,4 +10,6 @@ object Constants {
 
     const val CITY_MINSK = "Minsk"
     const val CITY_VITEBSK = "Vitebsk"
+
+    const val TIME_NOTIFICATION = 5_000
 }
