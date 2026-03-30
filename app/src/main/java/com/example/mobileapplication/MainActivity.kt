@@ -8,7 +8,9 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,8 +29,10 @@ import com.example.mobileapplication.core.LocaleHelper
 import com.example.mobileapplication.core.NetworkHelper
 import com.example.mobileapplication.data.local.AppDatabase
 import com.example.mobileapplication.data.remote.RetrofitClient
+import com.example.mobileapplication.data.repository.DbImageRepository
 import com.example.mobileapplication.data.repository.RoomBookRepository
 import com.example.mobileapplication.data.repository.RemoteBookRepository
+import com.example.mobileapplication.domain.model.BookImage
 import com.example.mobileapplication.ui.screens.AddUserScreen
 import com.example.mobileapplication.ui.screens.DetailsScreen
 import com.example.mobileapplication.ui.screens.MainScreen
@@ -36,6 +40,7 @@ import com.example.mobileapplication.ui.screens.Screen
 import com.example.mobileapplication.ui.screens.SettingsScreen
 import com.example.mobileapplication.ui.theme.MobileApplicationTheme
 import com.example.mobileapplication.ui.viewmodels.BookViewModel
+import com.example.mobileapplication.ui.viewmodels.ImageViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -58,26 +63,29 @@ class MainActivity : ComponentActivity() {
         val networkHelper = NetworkHelper(applicationContext)
         sharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-        // 4. Инициализация базы данных и репозиториев
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
             "books"
         )
             .fallbackToDestructiveMigration()
-            // .allowMainThreadQueries() // Лучше не использовать, так как у нас есть корутины
             .build()
 
         val apiService = RetrofitClient.apiService
-        val roomRepo = RoomBookRepository(db.bookDao())
-        val remoteRepo = RemoteBookRepository(apiService, networkHelper)
+        val bookLocalRepo = RoomBookRepository(db.bookDao())
+        val bookRemoteRepo = RemoteBookRepository(apiService, networkHelper)
 
-        // 5. Инициализация ViewModel
+        val imageLocalRepo = DbImageRepository(db.imageDao())
+
         val viewModel = BookViewModel(
             networkHelper,
-            remoteRepo,
-            roomRepo,
+            bookRemoteRepo,
+            bookLocalRepo,
             sharedPreferences)
+
+        val imageViewModel = ImageViewModel(
+            imageLocalRepo
+        )
 
         setContent {
             // Подписка на состояния из ViewModel
@@ -86,6 +94,19 @@ class MainActivity : ComponentActivity() {
             // Работа с темой
             val savedThemeMode = remember {
                 mutableIntStateOf(sharedPreferences.getInt("theme_mode", 0))
+            }
+
+            val images by imageViewModel.images.collectAsState()
+
+            // Лаунчер для выбора картинки из галереи
+            val imagePickerLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent()
+            ) { uri ->
+                uri?.let {
+                    // Сохраняем URI как строку (в реальном приложении лучше копировать файл во внутреннюю память)
+                    val newImage = BookImage(0, it.toString())
+                    imageViewModel.addImage(newImage)
+                }
             }
 
             val isDarkTheme = when (savedThemeMode.intValue) {
@@ -103,7 +124,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     // ГЛАВНЫЙ ЭКРАН
                     composable(Screen.Main.route) {
-                        MainScreen(navController, viewModel)
+                        MainScreen(navController, viewModel,imageViewModel)
                     }
 
                     // ЭКРАН НАСТРОЕК

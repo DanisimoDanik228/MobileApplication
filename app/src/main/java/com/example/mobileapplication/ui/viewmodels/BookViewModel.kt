@@ -186,18 +186,6 @@ class BookViewModel(
     // --- УПРАВЛЕНИЕ РЕПОЗИТОРИЕМ ---
     fun setRepositoryMode(isRemote: Boolean) {
         viewModelScope.launch {
-            if (!isRemote && networkHelper.isNetworkAvailable()) {
-                _isLoading.value = true
-                try {
-                    val remoteData = remoteRepo.getAllBooks()
-                    localRepo.deleteAllBooks() // Используем твой новый метод
-                    remoteData.forEach { localRepo.insertBook(it) }
-                } catch (e: Exception) {
-                    _errorMessage.value = "Ошибка синхронизации"
-                } finally {
-                    _isLoading.value = false
-                }
-            }
             _isRemoteMode.value = isRemote
             currentRepo = if (isRemote) remoteRepo else localRepo
             getAllBooks()
