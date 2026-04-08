@@ -34,7 +34,7 @@ class NetworkHelper(private val context: Context) {
 
             val request = Request.Builder()
                 .url(url)
-                .head()
+                .get()
                 .build()
 
             val start = System.currentTimeMillis()
