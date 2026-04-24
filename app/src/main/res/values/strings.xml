@@ -43,4 +43,6 @@
     <string name="database_mode_label">Db type</string>
     <string name="database_mode_local">Local bd</string>
     <string name="database_mode_remote">Remote bd(cloudflare)</string>
+
+    <string name="notification">Notification</string>
 </resources>

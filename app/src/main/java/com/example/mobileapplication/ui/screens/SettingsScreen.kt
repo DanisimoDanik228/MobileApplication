@@ -101,15 +101,13 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // --- НОВАЯ СЕКЦИЯ: УВЕДОМЛЕНИЯ ---
-            Text(
-                text = "Notification", // Можно добавить в strings.xml
-                style = MaterialTheme.typography.titleMedium
-            )
+            Text(text = stringResource(id = R.string.notification),style = MaterialTheme.typography.titleMedium)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Notification")
+                Text(text = stringResource(id = R.string.notification))
+
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
                     checked = isNotifEnabled,
