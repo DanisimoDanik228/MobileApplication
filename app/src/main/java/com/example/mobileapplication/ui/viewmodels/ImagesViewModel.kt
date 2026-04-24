@@ -29,15 +29,17 @@ class ImageViewModel(
         }
     }
 
-    // Изменили метод: теперь принимаем Uri из галереи
-    fun addImage(uri: Uri) {
+    // 1. Добавили параметр bookId с дефолтным значением 0
+    fun addImage(uri: Uri, bookId: Int = 0) {
         viewModelScope.launch(Dispatchers.IO) {
-            // 1. Сохраняем физический файл в память
             val internalPath = fileHelper.saveImageToInternalStorage(uri)
 
-            // 2. Если файл сохранился, пишем путь в БД Room
             if (internalPath != null) {
-                val newImage = BookImage(0, internalPath)
+                // 2. ИСПРАВЛЕНО: используем именованные параметры, чтобы не запутаться
+                val newImage = BookImage(
+                    bookId = bookId, // Теперь это Int
+                    path = internalPath // Теперь это String
+                )
                 repository.insertImage(newImage)
                 loadImages()
             }
@@ -46,10 +48,7 @@ class ImageViewModel(
 
     fun deleteImage(image: BookImage) {
         viewModelScope.launch(Dispatchers.IO) {
-            // 1. Удаляем файл из памяти
             fileHelper.deleteFileFromInternalStorage(image.path)
-
-            // 2. Удаляем запись из базы
             repository.deleteImage(image)
             loadImages()
         }

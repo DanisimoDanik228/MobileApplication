@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage // Не забудьте добавить зависимость Coil в build.gradle
+import coil.compose.AsyncImage
 import com.example.mobileapplication.R
 import com.example.mobileapplication.domain.model.Book
 import com.example.mobileapplication.domain.model.BookImage
@@ -37,7 +37,7 @@ import com.example.mobileapplication.ui.viewmodels.ImageViewModel
 fun MainScreen(
     navController: NavController,
     viewModel: BookViewModel,
-    imageViewModel: ImageViewModel // 1. Добавили ViewModel для картинок
+    imageViewModel: ImageViewModel
 ) {
     val books by viewModel.filteredBooks.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -48,17 +48,23 @@ fun MainScreen(
     val weatherTemp by viewModel.weather.collectAsState()
     val currentCity by viewModel.currentCity.collectAsState()
 
-    // 2. Состояние списка картинок
-    val images by imageViewModel.images.collectAsState()
+    // Все картинки из базы данных
+    val allImages by imageViewModel.images.collectAsState()
+
+    // Состояние: для какой книги мы сейчас выбираем картинку
+    var selectedBookIdForImage by remember { mutableStateOf<Int?>(null) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            // Просто передаем Uri. ViewModel сама сохранит его в файл и в БД
-            imageViewModel.addImage(it)
+            // Если ID выбран, добавляем картинку именно для этой книги
+            selectedBookIdForImage?.let { bookId ->
+                imageViewModel.addImage(it, bookId)
+            }
         }
     }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -96,62 +102,11 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
         ) {
-            // --- СЕКЦИЯ КАРТИНОК (В САМОМ ВЕРХУ) ---
-            Text("Галерея", style = MaterialTheme.typography.labelMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Кнопка добавления
-                item {
-                    Box(
-                        modifier = Modifier
-                            .size(70.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .clickable { imagePickerLauncher.launch("image/*") },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                    }
-                }
-
-                // Список картинок из БД
-                items(images) { img ->
-                    Box(modifier = Modifier.size(70.dp)) {
-                        AsyncImage(
-                            model = img.path,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(12.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                        // Кнопка удаления на картинке
-                        IconButton(
-                            onClick = { imageViewModel.deleteImage(img) },
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .size(20.dp)
-                                .offset(x = 4.dp, y = (-4).dp)
-                                .background(Color.Red, CircleShape)
-                        ) {
-                            Icon(Icons.Default.Delete, contentDescription = null, tint = Color.White, modifier = Modifier.size(12.dp))
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Кнопка настроек
             Button(
                 onClick = { navController.navigate(Screen.Settings.route) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(stringResource(id = R.string.go_to_settings))
@@ -159,7 +114,6 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ПОИСК
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { viewModel.searchQuery.value = it },
@@ -172,7 +126,6 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // СОРТИРОВКА
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -185,7 +138,6 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // СПИСОК КНИГ
             if (books.isEmpty() && !isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(if (searchQuery.isEmpty()) "Список пуст" else "Ничего не найдено")
@@ -193,13 +145,22 @@ fun MainScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(bottom = 80.dp)
                 ) {
-                    items(books.size) { index ->
-                        val book = books[index]
+                    items(books) { book ->
+                        // Фильтруем картинки: оставляем только те, что привязаны к этой книге
+                        // Убедитесь, что в BookImage есть поле bookId
+                        val bookSpecificImages = allImages.filter { it.bookId == book.id }
+
                         UserItem(
                             user = book,
+                            images = bookSpecificImages,
+                            onAddImageClick = {
+                                selectedBookIdForImage = book.id
+                                imagePickerLauncher.launch("image/*")
+                            },
+                            onDeleteImage = { imageViewModel.deleteImage(it) },
                             onClick = {
                                 navController.navigate(Screen.Details.createRoute(book.id.toString()))
                             }
@@ -211,8 +172,96 @@ fun MainScreen(
     }
 }
 
-// ... Ваши остальные Composable (SortChip, WeatherBadge, UserItem, NetworkStatusBadge) остаются без изменений
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserItem(
+    user: Book,
+    images: List<BookImage>,
+    onAddImageClick: () -> Unit,
+    onDeleteImage: (BookImage) -> Unit,
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "ID: ${user.id}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            Text(
+                text = user.bookName,
+                style = MaterialTheme.typography.titleMedium
+            )
+            if (user.authorName.isNotEmpty()) {
+                Text(
+                    text = user.authorName,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2
+                )
+            }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Ряд с кнопкой добавления и картинками конкретной книги
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Кнопка добавления персонального фото
+                item {
+                    Box(
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .clickable { onAddImageClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null)
+                    }
+                }
+
+                // Список уже добавленных фото для этой книги
+                items(images) { img ->
+                    Box(modifier = Modifier.size(60.dp)) {
+                        AsyncImage(
+                            model = img.path,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                        // Кнопка удаления на фото
+                        Surface(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .offset(x = 4.dp, y = (-4).dp)
+                                .clickable { onDeleteImage(img) },
+                            shape = CircleShape,
+                            color = Color.Red
+                        ) {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(14.dp).padding(2.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// --- ВСПОМОГАТЕЛЬНЫЕ КОМПОНЕНТЫ ---
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SortChip(text: String, isSelected: Boolean, onClick: () -> Unit) {
     FilterChip(
@@ -245,36 +294,6 @@ fun WeatherBadge(city: String, temp: String, onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun UserItem(user: Book, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "ID: ${user.id}",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.secondary
-            )
-            Text(
-                text = user.bookName,
-                style = MaterialTheme.typography.titleMedium
-            )
-            if (user.authorName.isNotEmpty()) {
-                Text(
-                    text = user.authorName,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 2
-                )
-            }
-        }
-    }
-}
-
 @Composable
 fun NetworkStatusBadge(isOnline: Boolean, ping: String) {
     Surface(
@@ -288,7 +307,7 @@ fun NetworkStatusBadge(isOnline: Boolean, ping: String) {
             Box(
                 modifier = Modifier
                     .size(6.dp)
-                    .background(Color.White, RoundedCornerShape(50))
+                    .background(Color.White, CircleShape)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(

@@ -1,7 +1,7 @@
 package com.example.mobileapplication.core
 
 object Constants {
-    const val CLOUDFLARETUNNEL_URL = "https://werty.uk/a/"
+    const val CLOUDFLARETUNNEL_URL = "https://werty.uk/"
     const val NETWORK_CHECK_FREQUENCY = 5000L
     const val NETWORK_TIMEOUT = 30000L
     const val WEATHER_API_KEY = "6925a79742481629ec6edfe0fcdc72b4"

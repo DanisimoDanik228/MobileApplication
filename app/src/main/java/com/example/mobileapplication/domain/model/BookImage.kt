@@ -8,6 +8,8 @@ import androidx.room.PrimaryKey
 data class BookImage(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
+    @ColumnInfo(name = "book_id") // Добавляем колонку для связи с книгой
+    var bookId: Int,
     @ColumnInfo(name = "path")
     var path: String
 )
