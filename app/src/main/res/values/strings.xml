@@ -17,6 +17,9 @@
     <string name="clear_fields">Clear Fields</string>
     <string name="error_not_found">Book not found</string>
     <string name="clear_all_records">Delete all books</string>
+    <string name="share_book">Share</string>
+    <string name="share_via">Share via</string>
+    <string name="share_book_text_template">ID: %1$s\nTitle: %2$s\nAuthor: %3$s\n\n%4$s\n\n— %5$s</string>
 
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
@@ -40,9 +43,32 @@
     <string name="book_author">Author: %1$s</string>
     <string name="book_description">Description: %1$s</string>
 
-    <string name="database_mode_label">Db type</string>
-    <string name="database_mode_local">Local bd</string>
-    <string name="database_mode_remote">Remote bd(cloudflare)</string>
-
     <string name="notification">Notification</string>
+
+    <string name="auth_title">Sign in to %1$s</string>
+    <string name="auth_register_title">Register in %1$s</string>
+    <string name="auth_switch_to_register">Need an account? Register</string>
+    <string name="auth_switch_to_login">Already have an account? Sign in</string>
+    <string name="auth_username_hint">Username</string>
+    <string name="auth_password_hint">Password</string>
+    <string name="auth_password_confirm_hint">Confirm password</string>
+    <string name="auth_login">Sign in</string>
+    <string name="auth_register">Register</string>
+    <string name="auth_account">Account</string>
+    <string name="auth_signed_in_as">Signed in as %s</string>
+    <string name="auth_logout">Sign out</string>
+    <string name="auth_username_empty">Enter your username</string>
+    <string name="auth_username_invalid">Invalid username</string>
+    <string name="auth_password_too_short">Password must be at least 6 characters</string>
+    <string name="auth_password_mismatch">Passwords do not match</string>
+    <string name="auth_error_generic">Something went wrong. Try again.</string>
+    <string name="auth_error_username_taken">This username is already taken</string>
+    <string name="auth_error_invalid_credentials">Wrong username or password</string>
+    <string name="auth_error_weak_password">Password is too weak</string>
+    <string name="auth_error_network">Network error. Check your connection.</string>
+
+    <string name="book_cover_source_title">Book cover</string>
+    <string name="book_cover_from_gallery">Choose from gallery</string>
+    <string name="book_cover_take_photo">Take photo</string>
+    <string name="camera_permission_denied">Camera permission is required to take a photo</string>
 </resources>

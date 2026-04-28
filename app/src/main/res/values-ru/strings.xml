@@ -16,6 +16,9 @@
     <string name="clear_fields">Очистить поля</string>
     <string name="error_not_found">Книга не найдена</string>
     <string name="clear_all_records">Очистить весь список</string>
+    <string name="share_book">Поделиться</string>
+    <string name="share_via">Поделиться через</string>
+    <string name="share_book_text_template">ID: %1$s\nНазвание: %2$s\nАвтор: %3$s\n\n%4$s\n\n— %5$s</string>
 
     <!-- Экран настроек (SettingsScreen) -->
     <string name="settings_title">Настройки</string>
@@ -39,9 +42,32 @@
     <string name="book_author">Автор: %1$s</string>
     <string name="book_description">Описание: %1$s</string>
 
-    <string name="database_mode_label">БД тип</string>
-    <string name="database_mode_local">Локальная бд</string>
-    <string name="database_mode_remote">Удалённая бд(cloudflare)</string>
-
     <string name="notification">Уведомление</string>
+
+    <string name="auth_title">Вход в %1$s</string>
+    <string name="auth_register_title">Регистрация в %1$s</string>
+    <string name="auth_switch_to_register">Нет аккаунта? Зарегистрироваться</string>
+    <string name="auth_switch_to_login">Уже есть аккаунт? Войти</string>
+    <string name="auth_username_hint">Логин</string>
+    <string name="auth_password_hint">Пароль</string>
+    <string name="auth_password_confirm_hint">Повторите пароль</string>
+    <string name="auth_login">Войти</string>
+    <string name="auth_register">Зарегистрироваться</string>
+    <string name="auth_account">Аккаунт</string>
+    <string name="auth_signed_in_as">Вы вошли как %s</string>
+    <string name="auth_logout">Выйти</string>
+    <string name="auth_username_empty">Введите логин</string>
+    <string name="auth_username_invalid">Некорректный логин</string>
+    <string name="auth_password_too_short">Пароль не короче 6 символов</string>
+    <string name="auth_password_mismatch">Пароли не совпадают</string>
+    <string name="auth_error_generic">Не удалось выполнить операцию. Попробуйте снова.</string>
+    <string name="auth_error_username_taken">Этот логин уже занят</string>
+    <string name="auth_error_invalid_credentials">Неверный логин или пароль</string>
+    <string name="auth_error_weak_password">Слишком слабый пароль</string>
+    <string name="auth_error_network">Ошибка сети. Проверьте подключение.</string>
+
+    <string name="book_cover_source_title">Обложка книги</string>
+    <string name="book_cover_from_gallery">Из галереи</string>
+    <string name="book_cover_take_photo">Сделать снимок</string>
+    <string name="camera_permission_denied">Нужно разрешение камеры, чтобы сделать фото</string>
 </resources>
